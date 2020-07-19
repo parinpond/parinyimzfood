@@ -2,10 +2,17 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:location/location.dart';
+import 'package:parinyimzfood/model/cart_model.dart';
 import 'package:parinyimzfood/model/food_model.dart';
 import 'package:parinyimzfood/model/user_model.dart';
+import 'package:parinyimzfood/utility/my_api.dart';
 import 'package:parinyimzfood/utility/my_constant.dart';
 import 'package:parinyimzfood/utility/my_style.dart';
+import 'package:parinyimzfood/utility/normal_dialog.dart';
+import 'package:parinyimzfood/utility/sqlite_helper.dart';
+import 'package:toast/toast.dart';
 
 class ShowMenuFood extends StatefulWidget {
   final UserModel userModel;
@@ -19,13 +26,23 @@ class _ShowMenuFoodState extends State<ShowMenuFood> {
   String idShop;
   List<FoodModel> foodModels = List();
   int amount = 1;
-
+  double lat1, lng1, lat2, lng2;
+  Location location = Location();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     userModel = widget.userModel;
     readFoodMenu();
+    findLocation();
+  }
+
+  Future<Null> findLocation() async {
+    location.onLocationChanged.listen((event) {
+      lat1 = event.latitude;
+      lng1 = event.longitude;
+      // print('lat1= $lat1, lng1 = $lng1');
+    });
   }
 
   Future<Null> readFoodMenu() async {
@@ -33,10 +50,10 @@ class _ShowMenuFoodState extends State<ShowMenuFood> {
     String url =
         '${MyConstant().domain}getFoodWhereIdShop.php?isAdd=true&idShop=$idShop';
     Response response = await Dio().get(url);
-    print('res --> $response');
+    // print('res --> $response');
 
     var result = json.decode(response.data);
-    print('result = $result');
+    // print('result = $result');
 
     for (var map in result) {
       FoodModel foodModel = FoodModel.fromJson(map);
@@ -197,7 +214,7 @@ class _ShowMenuFoodState extends State<ShowMenuFood> {
                         print(
                             'Order ${foodModels[index].nameFood} Amount = $amount');
 
-                        addOrderToCart();
+                        addOrderToCart(index);
                       },
                       child: Text(
                         'Order',
@@ -227,5 +244,71 @@ class _ShowMenuFoodState extends State<ShowMenuFood> {
     );
   }
 
-  void addOrderToCart() {}
+  Future<Null> addOrderToCart(int index) async {
+    String nameShop = userModel.nameShop;
+    String idFood = foodModels[index].id;
+    String nameFood = foodModels[index].nameFood;
+    String price = foodModels[index].price;
+
+    int priceInt = int.parse(price);
+    int sumInt = priceInt * amount;
+
+    lat2 = double.parse(userModel.lat);
+    lng2 = double.parse(userModel.lng);
+    double distance = MyAPI().calculateDistance(lat1, lng1, lat2, lng2);
+
+    var myFormat = NumberFormat('##0.0#', 'en_US');
+    String distanceString = myFormat.format(distance);
+
+    int transport = MyAPI().calculateTransport(distance);
+
+    print(
+        'idShop = $idShop, nameShop = $nameShop, idFood = $idFood, nameFood = $nameFood, price = $price, amount = $amount, sum = $sumInt, distance = $distanceString, transport = $transport');
+
+    Map<String, dynamic> map = Map();
+
+    map['idShop'] = idShop;
+    map['nameShop'] = nameShop;
+    map['idFood'] = idFood;
+    map['nameFood'] = nameFood;
+    map['price'] = price;
+    map['amount'] = amount.toString();
+    map['sum'] = sumInt.toString();
+    map['distance'] = distanceString;
+    map['transport'] = transport.toString();
+
+    //print('map ==> ${map.toString()}');
+
+    CartModel cartModel = CartModel.fromJson(map);
+
+    var object = await SQLiteHelper().readAllDataFromSQLite();
+    print('object lenght = ${object.length}');
+
+    if (object.length == 0) {
+      await SQLiteHelper().insertDataToSQLite(cartModel).then((value) {
+        print('Insert Success');
+        showToast('Insert Success');
+      });
+    } else {
+      String idShopSQLite = object[0].idShop;
+      print('idShopSQLite ==> $idShopSQLite');
+      if (idShop == idShopSQLite) {
+        await SQLiteHelper().insertDataToSQLite(cartModel).then((value) {
+          print('Insert Success');
+          showToast('Insert Success');
+        });
+      } else {
+        normalDialog(context,
+            'ตะกร้ามี รายการอาหารของ ร้าน ${object[0].nameShop} กรุณา ซืือจากร้านนี่ให้ จบก่อน คะ');
+      }
+    }
+  }
+
+  void showToast(String string) {
+    Toast.show(
+      string,
+      context,
+      duration: Toast.LENGTH_LONG,
+    );
+  }
 }
