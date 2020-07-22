@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:parinyimzfood/screens/show_cart.dart';
 import 'package:parinyimzfood/utility/my_style.dart';
 import 'package:parinyimzfood/utility/signout_process.dart';
 import 'package:parinyimzfood/widget/show_list_shop_all.dart';
@@ -53,6 +54,7 @@ class _MainUserState extends State<MainUser> {
               children: <Widget>[
                 showHead(),
                 menuListShop(),
+                menuCart(),
                 menuStatusFoodOrder(),
               ],
             ),
@@ -127,6 +129,21 @@ class _MainUserState extends State<MainUser> {
         'Login',
         style: TextStyle(color: MyStyle().primaryColor),
       ),
+    );
+  }
+
+  Widget menuCart() {
+    return ListTile(
+      leading: Icon(Icons.add_shopping_cart),
+      title: Text('ตะกร้า ของฉัน'),
+      subtitle: Text('รายการอาหาร ที่อยู่ใน ตะกร้า ยังไม่ได้ Order'),
+      onTap: () {
+        Navigator.pop(context);
+        MaterialPageRoute route = MaterialPageRoute(
+          builder: (context) => ShowCart(),
+        );
+        Navigator.push(context, route);
+      },
     );
   }
 }

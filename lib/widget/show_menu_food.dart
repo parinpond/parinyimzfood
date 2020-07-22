@@ -28,6 +28,7 @@ class _ShowMenuFoodState extends State<ShowMenuFood> {
   int amount = 1;
   double lat1, lng1, lat2, lng2;
   Location location = Location();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -71,7 +72,7 @@ class _ShowMenuFoodState extends State<ShowMenuFood> {
             itemCount: foodModels.length,
             itemBuilder: (context, index) => GestureDetector(
               onTap: () {
-                print('You Click index = $index');
+                // print('You Click index = $index');
                 amount = 1;
                 confirmOrder(index);
               },
@@ -176,7 +177,7 @@ class _ShowMenuFoodState extends State<ShowMenuFood> {
                     onPressed: () {
                       setState(() {
                         amount++;
-                        print('amount = $amount');
+                        // print('amount = $amount');
                       });
                     },
                   ),
@@ -211,8 +212,8 @@ class _ShowMenuFoodState extends State<ShowMenuFood> {
                           borderRadius: BorderRadius.circular(15)),
                       onPressed: () {
                         Navigator.pop(context);
-                        print(
-                            'Order ${foodModels[index].nameFood} Amount = $amount');
+                        // print(
+                        //     'Order ${foodModels[index].nameFood} Amount = $amount');
 
                         addOrderToCart(index);
                       },
