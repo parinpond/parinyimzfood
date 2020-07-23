@@ -325,10 +325,8 @@ class _ShowCartState extends State<ShowCart> {
     String amount = amounts.toString();
     String sum = sums.toString();
 
-    print(
-        'orderDateTime = $orderDateTime, idShop = $idShop, nameShop = $nameShop, distance = $distance, transport = $transport');
-    print(
-        'idFood = $idFood, nameFood = $nameFood, price = $price, amount = $amount, sum = $sum');
+    //print('orderDateTime = $orderDateTime, idShop = $idShop, nameShop = $nameShop, distance = $distance, transport = $transport');
+    //print( 'idFood = $idFood, nameFood = $nameFood, price = $price, amount = $amount, sum = $sum');
 
     String url =
         '${MyConstant().domain}addOrder.php?isAdd=true&OrderDateTime=$orderDateTime&idShop=$idShop&NameShop=$nameShop&Distance=$distance&Transport=$transport&idFood=$idFood&NameFood=$nameFood&Price=$price&Amount=$amount&Sum=$sum&idRider=none&Status=UserOrder';
