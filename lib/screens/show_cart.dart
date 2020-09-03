@@ -6,6 +6,7 @@ import 'package:parinyimzfood/utility/my_constant.dart';
 import 'package:parinyimzfood/utility/my_style.dart';
 import 'package:parinyimzfood/utility/normal_dialog.dart';
 import 'package:parinyimzfood/utility/sqlite_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 class ShowCart extends StatefulWidget {
@@ -325,11 +326,17 @@ class _ShowCartState extends State<ShowCart> {
     String amount = amounts.toString();
     String sum = sums.toString();
 
-    //print('orderDateTime = $orderDateTime, idShop = $idShop, nameShop = $nameShop, distance = $distance, transport = $transport');
-    //print( 'idFood = $idFood, nameFood = $nameFood, price = $price, amount = $amount, sum = $sum');
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String idUser = preferences.getString('id');
+    String nameUser = preferences.getString('Name');
+
+    print(
+        'orderDateTime = $orderDateTime, idUser = $idUser, nameUser = $nameUser, idShop = $idShop, nameShop = $nameShop, distance = $distance, transport = $transport');
+    print(
+        'idFood = $idFood, nameFood = $nameFood, price = $price, amount = $amount, sum = $sum');
 
     String url =
-        '${MyConstant().domain}addOrder.php?isAdd=true&OrderDateTime=$orderDateTime&idShop=$idShop&NameShop=$nameShop&Distance=$distance&Transport=$transport&idFood=$idFood&NameFood=$nameFood&Price=$price&Amount=$amount&Sum=$sum&idRider=none&Status=UserOrder';
+        '${MyConstant().domain}addOrder.php?isAdd=true&OrderDateTime=$orderDateTime&idUser=$idUser&NameUser=$nameUser&idShop=$idShop&NameShop=$nameShop&Distance=$distance&Transport=$transport&idFood=$idFood&NameFood=$nameFood&Price=$price&Amount=$amount&Sum=$sum&idRider=none&Status=UserOrder';
 
     await Dio().get(url).then((value) {
       if (value.toString() == 'true') {
