@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +26,20 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     checkPreferance();
+    aboutNotification();
+  }
+
+  Future<Null> aboutNotification() async {
+    if (Platform.isAndroid) {
+      FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+      await firebaseMessaging.configure(
+        onLaunch: (message) {},
+        onResume: (message) {},
+        onMessage: (message) {
+          normalDialog(context, 'มีคนสั่งอาหาร เข้ามาค่ะ');
+        },
+      );
+    } else if (Platform.isIOS) {}
   }
 
   Future<Null> checkPreferance() async {
@@ -35,7 +51,7 @@ class _HomeState extends State<Home> {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String chooseType = preferences.getString('ChooseType');
       String idLogin = preferences.getString('id');
-      print('idLogin = $idLogin');
+      //print('idLogin = $idLogin');
 
       if (idLogin != null && idLogin.isNotEmpty) {
         String url =

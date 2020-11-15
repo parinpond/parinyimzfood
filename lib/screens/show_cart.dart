@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:parinyimzfood/model/cart_model.dart';
+import 'package:parinyimzfood/model/user_model.dart';
 import 'package:parinyimzfood/utility/my_constant.dart';
 import 'package:parinyimzfood/utility/my_style.dart';
 import 'package:parinyimzfood/utility/normal_dialog.dart';
@@ -28,7 +31,7 @@ class _ShowCartState extends State<ShowCart> {
 
   Future<Null> readSQLite() async {
     var object = await SQLiteHelper().readAllDataFromSQLite();
-    print('object length ==> ${object.length}');
+    //print('object length ==> ${object.length}');
     if (object.length != 0) {
       for (var model in object) {
         String sumString = model.sum;
@@ -356,5 +359,32 @@ class _ShowCartState extends State<ShowCart> {
     await SQLiteHelper().deleteAllData().then((value) {
       readSQLite();
     });
+  }
+
+  Future<Null> notificationToShop(String idShop) async {
+    String urlFindToken =
+        '${MyConstant().domain}getUserWhereId.php?isAdd=true&id=$idShop';
+    await Dio().get(urlFindToken).then((value) {
+      var result = json.decode(value.data);
+      print('result ==> $result');
+      for (var json in result) {
+        UserModel model = UserModel.fromJson(json);
+        String tokenShop = model.token;
+        print('tokenShop ==>> $tokenShop');
+
+        String title = 'มี Order จากลูกค้า';
+        String body = 'มีการสั่งอาหาร จากลูกค้า ครับ';
+        String urlSendToken =
+            '${MyConstant().domain}apiNotification.php?isAdd=true&token=$tokenShop&title=$title&body=$body';
+
+        sendNotificationToShop(urlSendToken);
+      }
+    });
+  }
+
+  Future<Null> sendNotificationToShop(String urlSendToken) async {
+    await Dio().get(urlSendToken).then(
+          (value) => normalDialog(context, 'ส่ง Order ไปที่ ร้านค้าแล้ว คะ'),
+        );
   }
 }
