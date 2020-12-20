@@ -26,20 +26,6 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     checkPreferance();
-    aboutNotification();
-  }
-
-  Future<Null> aboutNotification() async {
-    if (Platform.isAndroid) {
-      FirebaseMessaging firebaseMessaging = FirebaseMessaging();
-      await firebaseMessaging.configure(
-        onLaunch: (message) {},
-        onResume: (message) {},
-        onMessage: (message) {
-          normalDialog(context, 'มีคนสั่งอาหาร เข้ามาค่ะ');
-        },
-      );
-    } else if (Platform.isIOS) {}
   }
 
   Future<Null> checkPreferance() async {

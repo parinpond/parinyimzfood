@@ -4,6 +4,7 @@ import 'package:parinyimzfood/screens/show_cart.dart';
 class MyStyle {
   Color darkColor = Colors.blue.shade900;
   Color primaryColor = Colors.green;
+
   Widget iconShowCart(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.add_shopping_cart),
@@ -86,9 +87,10 @@ class MyStyle {
         style: TextStyle(
           fontSize: 16.0,
           color: Colors.blue.shade900,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w500,
         ),
       );
+
   Text showTitleH3White(String title) => Text(
         title,
         style: TextStyle(
@@ -97,6 +99,16 @@ class MyStyle {
           fontWeight: FontWeight.w600,
         ),
       );
+
+  Text showTitleH3Red(String title) => Text(
+        title,
+        style: TextStyle(
+          fontSize: 16.0,
+          color: Colors.red.shade900,
+          fontWeight: FontWeight.w500,
+        ),
+      );
+
   Text showTitleH3Purple(String title) => Text(
         title,
         style: TextStyle(
@@ -105,14 +117,7 @@ class MyStyle {
           fontWeight: FontWeight.w500,
         ),
       );
-  Text showTitleH3Red(String title) => Text(
-        title,
-        style: TextStyle(
-          fontSize: 16.0,
-          color: Colors.red.shade900,
-          fontWeight: FontWeight.bold,
-        ),
-      );
+
   Container showLogo() {
     return Container(
       width: 120.0,
